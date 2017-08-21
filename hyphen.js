@@ -53,7 +53,6 @@ function hyphen(selector) {
                 b = k;
 
                 hyphen = whetherNeedHyphen(wordLenArray, charArray, k);
-                // log(k, charArray[k], sliceWidth, hyphen)
                 breakMem.push({
                     b: b,
                     hyphen: hyphen,
@@ -159,21 +158,20 @@ function hyphen(selector) {
 
     // 检查是否需要忽略该字符
     function whetherNeedMoveOn(wordLenArray, charArray, index) {
-
         function isMark(index){
         	return MARK.indexOf(charArray[index].charCodeAt()) > -1;
         }
-
         var ignore = true;
-
         if (isMark(index)) {
             // 特殊字符不应该断行
             return ignore;
         } else if (charArray[index - 2] && !isMark(index - 1) && isMark(index - 2)) {
             // 至少让单词连续两个字符才允许断行
             return ignore;
+        } else if (isMark(index + 1)) {
+            // 不允许尾字符单个
+            return ignore;
         }
-
         return !ignore;
     }
 
