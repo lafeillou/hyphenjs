@@ -18,35 +18,41 @@ function hyphen(selector, deep) {
     });
 
     MARK.push(SPACE);
-    
+
+    var hyphen_id = HYPHEN_PREFIX + selector.split('').map(function(mark) {
+        return mark.charCodeAt();
+    }).join('');
+
     // 文本缓存
-    var hyphenCounter = 0;
-    if (window.__hyphen_cached === undefined) {
-        window.__hyphen_cached = Object.create(null);
+    if (window.hyphen_cached === undefined) {
+        window.hyphen_cached = Object.create(null);
     }
+
+    // 取得当前对象的存储数据
+    var cached = [], counter = 0; 
+    if(window.hyphen_cached[hyphen_id] === undefined){
+        window.hyphen_cached[hyphen_id] = [];
+    }
+    cached = window.hyphen_cached[hyphen_id];
 
     var pList = document.querySelectorAll(selector);
 
     for (var p = 0, len = pList.length; p < len; p++) {
-        textProcessor(pList[p]);
+        textProcessor(pList[p], p);
     }
 
-    function textProcessor(target) {
-        // target.setAttribute('data-hyphen', 'target_id_' + String(Math.random() * 1e8).split('.')[0]);
-        var cachedHyphenText = window.__hyphen_cached[HYPHEN_PREFIX + hyphenCounter];
-        var dataHyphen = target.getAttribute('data-hyphen');
-
+    function textProcessor(target, index) {
+        var cachedHyphenText = cached[index];
         if(cachedHyphenText === undefined){
-            target.setAttribute('data-hyphen', HYPHEN_PREFIX + hyphenCounter);
-            window.__hyphen_cached[HYPHEN_PREFIX + hyphenCounter++] = target.innerText;
+            cachedHyphenText = cached[index] = target.innerText;
         }
-
         var targetStyle = window.getComputedStyle(target);
         var calcRaw = {
             fontSize: parseFloat(targetStyle['font-size']),
             boxWidth: parseFloat(targetStyle['width']),
-            text: dataHyphen ? window.__hyphen_cached[dataHyphen] : target.innerText
+            text: cachedHyphenText
         };
+
         var charArray = calcRaw.text.split('');
         var wordArray = calcRaw.text.split(' ');
         var wordLenArray = wordArray.map(function(word) {
@@ -148,17 +154,17 @@ function hyphen(selector, deep) {
         textRaw.pop();
 
         target.removeChild(textDiv);
-        // log(textData)
+
         return textData;
     }
 
     // 计算行最终长度和盒子宽度的差值
     function diff4LetterSpacing(textData, charSliceArray, boxWidth) {
-        // log(charSliceArray, boxWidth);
+
         var len = charSliceArray.length;
         var lineWidth = getAccWidth(textData, charSliceArray, 0, len);
         var diff = (boxWidth - lineWidth) / len;
-        // log(charSliceArray)
+
         return diff;
     }
 

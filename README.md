@@ -22,5 +22,11 @@ hyphen(selector, deep);
 
 -----
 
+
+
+> 所有文本对象存储在全局对象`window.hyphen_cached`
+
+
+
 更多详情参见html里的demo，或者clone下来自己尝试！
 
