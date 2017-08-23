@@ -2,11 +2,13 @@
  * hyphen.js
  * 文字智能断行，接近齐头尾效果
  **/
+
 var log = console.log.bind(console);
 
-function hyphen(selector) {
+function hyphen(selector, deep) {
     var PREFIX = 'char';
     var SPACE = 32;
+    var HYPHEN = '-';
     // 需要特殊处理的符号
     var markSymbol = '\"\':;,.?()[]{}<>~!@#$%^&*-+=/\\|1234567890';
 
@@ -24,8 +26,6 @@ function hyphen(selector) {
 
     function textProcessor(target) {
         var targetStyle = window.getComputedStyle(target);
-        var brHyphen = '-<br/>';
-        var br = '<br/>';
         var calcRaw = {
             fontSize: parseFloat(targetStyle['font-size']),
             boxWidth: parseFloat(targetStyle['width']),
@@ -66,8 +66,17 @@ function hyphen(selector) {
         // 开始断行
         for (var w = 1, len = breakMem.length; w < len; w++) {
             var sliceText = charArray.slice(breakMem[w - 1].b, breakMem[w].b);
-            var breakBr = breakMem[w].hyphen ? brHyphen : br;
-            lines.push(sliceText.join('') + ((len - w) == 1 ? '' : breakBr));
+            var hyphen = breakMem[w].hyphen ? HYPHEN : '';
+            var lastLine = (len - w) == 1;
+            sliceText.push(lastLine ? '' : hyphen);
+            var diff = diff4LetterSpacing(textData, sliceText, calcRaw.boxWidth);
+            lines.push('<span style="display: inline-block; letter-spacing: '
+                + (deep && !lastLine ? diff : '0')
+                + 'px;">' 
+                + sliceText.join('')
+                + '</span>' 
+                + '<br/>'
+            );
         }
         // 替换原来的文本
         target.innerHTML = lines.join('');
@@ -116,18 +125,31 @@ function hyphen(selector) {
                 textData[PREFIX + charCode].width = spanA.getBoundingClientRect().width - spanB.getBoundingClientRect().width;
             }
         }
-
+        textRaw.push(HYPHEN);
         while (i < textRaw.length) {
             dealWithSingleChar(textRaw[i++]);
         }
-        target.removeChild(textDiv);
+        textRaw.pop();
 
+        target.removeChild(textDiv);
+        // log(textData)
         return textData;
+    }
+
+    // 计算行最终长度和盒子宽度的差值
+    function diff4LetterSpacing(textData, charSliceArray, boxWidth){
+        // log(charSliceArray, boxWidth);
+        var len = charSliceArray.length;
+        var lineWidth = getAccWidth(textData, charSliceArray, 0, len);
+        var diff = (boxWidth - lineWidth) / len;
+        // log(charSliceArray)
+        return diff;
     }
 
     // 计算n到m字符间的累计宽度
     function getAccWidth(textData, charArray, from, to) {
         return charArray.slice(from, to).reduce(function(acc, cur) {
+            if(!cur) return acc + 0;
             return acc + textData[PREFIX + cur.charCodeAt()].width;
         }, 0);
     }
@@ -137,7 +159,10 @@ function hyphen(selector) {
         var inWordIndex = -1;
         var accIndex = 0;
         var needHyphen = false;
+        // 当前是特殊字符
         if (MARK.indexOf(charArray[index].charCodeAt()) > -1) { return needHyphen; }
+        // 前一个是特殊字符
+        if (charArray[index - 1] && MARK.indexOf(charArray[index - 1].charCodeAt()) > -1) { return needHyphen; }
         wordLenArray.reduce(function(acc, cur, i) {
             if (inWordIndex === -1 && index < (acc + cur + i)) {
                 inWordIndex = i;
@@ -159,7 +184,7 @@ function hyphen(selector) {
     // 检查是否需要忽略该字符
     function whetherNeedMoveOn(wordLenArray, charArray, index) {
         function isMark(index){
-        	return MARK.indexOf(charArray[index].charCodeAt()) > -1;
+            return MARK.indexOf(charArray[index].charCodeAt()) > -1;
         }
         var ignore = true;
         if (isMark(index)) {
@@ -168,11 +193,10 @@ function hyphen(selector) {
         } else if (charArray[index - 2] && !isMark(index - 1) && isMark(index - 2)) {
             // 至少让单词连续两个字符才允许断行
             return ignore;
-        } else if (isMark(index + 1)) {
+        } else if (charArray[index + 1] && isMark(index + 1)) {
             // 不允许尾字符单个
             return ignore;
         }
         return !ignore;
     }
-
 }
