@@ -11,16 +11,13 @@
     <p class="text text-js">
         Focused development of the sixth edition started in 2009, as the fifth edition was being prepared for publication. However, this was preceded by significant experimentation and language enhancement design efforts dating to the publication of the third edition in 1999. In a very real sense, the completion of the sixth edition is the culmination of a fifteen year effort. The goals for this addition included providing better support for large applications, library creation, and for use of ECMAScript as a compilation target for other languages. Some of its major enhancements included modules, class declarations, lexical block scoping, iterators and generators, promises for asynchronous programming, destructuring patterns, and proper tail calls. The ECMAScript library of built-ins was expanded to support additional data abstractions including maps, sets, and arrays of binary numeric values as well as additional support for Unicode supplemental characters in strings and regular expressions. The built-ins were also made extensible via subclassing. The sixth edition provides the foundation for regular, incremental <span class="w-highlight">language</span> and library enhancements. The sixth edition was adopted by the General Assembly of June 2015.
     </p>
+
     <p class="text-origin">
         Focused development of the sixth edition started in 2009, as the fifth edition was being prepared for publication. However, this was preceded by significant experimentation and language enhancement design efforts dating to the publication of the third edition in 1999. In a very real sense, the completion of the sixth edition is the culmination of a fifteen year effort. The goals for this addition included providing better support for large applications, library creation, and for use of ECMAScript as a compilation target for other languages. Some of its major enhancements included modules, class declarations, lexical block scoping, iterators and generators, promises for asynchronous programming, destructuring patterns, and proper tail calls. The ECMAScript library of built-ins was expanded to support additional data abstractions including maps, sets, and arrays of binary numeric values as well as additional support for Unicode supplemental characters in strings and regular expressions. The built-ins were also made extensible via subclassing. The sixth edition provides the foundation for regular, incremental <span class="w-highlight">language</span> and library enhancements. The sixth edition was adopted by the General Assembly of June 2015.
     </p>
 
     <h6 class="text text-js">
         It is usually safer to provide an initial value because there are three possible outputs without initialValue, as shown in the following example.
-    </h6>
-
-    <h6 class="text text-js">
-        cant experimentation and language enhancement design efforts dating to the publication of the third edition in 1999. In a very real sense, the completion of the sixth edition is the culmination of a fifteen year effort. The goals for this addition included providing better support for large applications, library creation, and for use of ECMAScript as a compilation target for othe.
     </h6>
 
     <p id="text" class="text text-animate">
@@ -74,14 +71,13 @@
     <script type="text/javascript" src="./hyphen.js"></script>
     <script type="text/javascript">
     var INTERVAL = 3000;
-    var selector = '.text';
-    var selector2 = '#text';
-    var textAnimate = document.querySelector(selector2);
-    hyphen('p', true);
+    var selector = '#text';
+    var textAnimate = document.querySelector(selector);
+    hyphen('.text', true);
     hyphen('h6', true);
 
     setTimeout(function(){
-        hyphen('p', true);
+        hyphen('.text', true);
         hyphen('h6', true);
         console.log('repeat hyphen!');
     }, 600);
@@ -96,7 +92,7 @@
 
         textAnimate.setAttribute('style', 'width: ' + widthArray[i++] + 'px');
 
-        hyphen(selector2, true);
+        hyphen(selector, true);
     }, INTERVAL)
     </script>
 </body>
