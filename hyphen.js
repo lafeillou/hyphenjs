@@ -1,6 +1,6 @@
 /**
  * hyphen.js
- * 文字智能断行，接近齐头尾效果
+ * 纯文本智能断行，接近齐头尾效果
  **/
 
 var log = console.log.bind(console);
