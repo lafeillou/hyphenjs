@@ -37,26 +37,31 @@
         }
         this.init();
     }
-    hyphen.__memory__ = [];
+    hyphen.__memory__ = {};
     hyphen.prototype = {
         constructor: hyphen,
         init: function () {
             var conf = this.$conf;
             var self = this;
+            var list = document.querySelectorAll(conf.selector);
             this.$id = utils.getUniqueId(conf.prefix, conf.selector);
-            if(hyphen.__memory__.indexOf(this.$id) > -1) {
-                utils.warn('hyphen warning: selector "' + conf.selector + '" can\'t hyphen twice.')
-                return;
+            if(hyphen.__memory__[this.$id]) {
+                utils.warn('hyphen warning: selector "' + conf.selector + '" hyphen again.')
+                list = hyphen.__memory__[this.$id];
+            } else {
+                var listClone = [];
+                for(var i = 0; i < list.length; i++) {
+                    listClone.push(list[i].cloneNode());
+                }
+                hyphen.__memory__[this.$id] = listClone;
             }
-            hyphen.__memory__.push(this.$id);
+            
             // 数据缓存
             this.$cached = Object.create(null);
             // 特殊符号标记
             this.$markset = conf.markSymbol.split('').map(function (c) {
                 return c.charCodeAt();
             }).concat([SPACE]);
-
-            var list = document.querySelectorAll(conf.selector);
 
             list.forEach(function (target, index) {
                 self.storeCached(target, index);
