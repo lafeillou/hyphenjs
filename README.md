@@ -1,6 +1,5 @@
 # hyphenjs
 > 让英文智能断行并添加连字符，实现齐头尾/两端对齐的效果~
-> 如果好用就star和提bug呗~
 
 ----
 
@@ -16,17 +15,15 @@
 /**
  * selector 选择器，只要是querySelectorAll支持的都可以
  * deep 是否强制完美对齐，如果不对齐则会有一定的透气空间
+ * prefix 设置实例唯一id和生成DOM的class
+ * markSymbol 特殊标识符
  **/
-hyphen(selector, deep);
+hyphen({
+    selector: 'p',
+    deep: true,
+    prefix: 'hyphen',
+    markSymbol: '\"\':;,.?()[]{}<>~!@#$%^&*-+=/\\|1234567890'
+});
+// 简单用法
+hyphen('h6');
 ```
-
------
-
-
-
-> 所有文本对象存储在全局对象`window.hyphen_cached`
-
-
-
-更多详情参见html里的demo，或者clone下来自己尝试！
-

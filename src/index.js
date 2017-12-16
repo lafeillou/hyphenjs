@@ -63,25 +63,27 @@
                 self.wrapText(target);
             });
         },
+        // 文本断行核心函数
         wrapText: function (target) {
             target.style.whiteSpace = 'nowrap';
             var text = target.innerText;
             var charArray = text.split('');
-            var fullCharArray = charArray.concat(this.$conf.markSymbol.split(''));
-            var targetStyle = this.calcStyle(target);
-            var wordLenArray = text.split(' ').map(function (word) {
+            var wordLenArray = text.split(' ').map(function(word) {
                 return word.length;
             });
+            var fullCharArray = charArray.concat(this.$conf.markSymbol.split(''));
+            var targetStyle = this.calcStyle(target);
             var textCharMap = this.getAllCharRectData(target, fullCharArray);
             var textAnalData = [];
             // 遍历获取断行的所有位置，以及断行是否需要连字符
             for (var k = 0, b = 0, len = charArray.length; k < len; k++) {
+                if (this.optimizeWrap(charArray, k)) continue;
                 var charDistance = this.getTwoCharDistance(charArray, textCharMap, b, k + 1);
                 if (charDistance > targetStyle.width) {
                     b = k;
                     textAnalData.push({
                         br: b,
-                        hyphen: true,
+                        hyphen: this.isNeedHyphen(wordLenArray, charArray, k - 1),
                         char: charArray[b]
                     });
                 }
@@ -90,7 +92,6 @@
             textAnalData.unshift({ br: 0 });
             // 添加结尾一行
             textAnalData.push({ br: len });
-
             var singleLineArray = [];
             for (var t = 1, len = textAnalData.length; t < len; t++) {
                 var lineText = charArray.slice(textAnalData[t - 1].br, textAnalData[t].br);
@@ -98,6 +99,9 @@
                 if (t === len - 1) {
                     renderText = this.renderLineString(lineText.join(''));
                 } else {
+                    if(textAnalData[t].hyphen) {
+                        lineText.push('-');
+                    }
                     renderText = this.renderLineString(
                         lineText.join(''),
                         this.getLineLetterSpacing(textCharMap, lineText, targetStyle.width)
@@ -107,18 +111,70 @@
             }
             target.innerHTML = singleLineArray.join('');
         },
+        // 每行最后是否需要连字符
+        isNeedHyphen: function(wordLenArray, charArray, index) {
+            var inWordIndex = -1;
+            var accIndex = 0;
+            var needHyphen = false;
+            var markset = this.$markset;
+            // 当前是特殊字符
+            if (markset.indexOf(charArray[index].charCodeAt()) > -1) { return needHyphen; }
+            // 前一个是特殊字符
+            if (charArray[index - 1] && markset.indexOf(charArray[index - 1].charCodeAt()) > -1) { return needHyphen; }
+            wordLenArray.reduce(function(acc, cur, i) {
+                if (inWordIndex === -1 && index < (acc + cur + i)) {
+                    inWordIndex = i;
+                    accIndex = acc;
+                }
+                return acc + cur;
+            }, 0);
+            // 在单词内部
+            if (inWordIndex >= 0) {
+                needHyphen = true;
+                // 是单词的首字符
+                if (index === accIndex + inWordIndex) {
+                    needHyphen = false;
+                }
+            }
+            return needHyphen;
+        },
+        // 优化断行时机
+        optimizeWrap: function(charArray, index){
+            var markset = this.$markset;
+            function isMark(i) {
+                return markset.indexOf(charArray[i].charCodeAt()) > -1;
+            }
+            // 特殊字符不应该断行，至少让单词连续两个字符才允许断行，不允许尾字符单个
+            var ignore = true;
+            if (isMark(index)) {
+                // 特殊字符不应该断行
+                return ignore;
+            } else if (charArray[index - 2] && !isMark(index - 1) && isMark(index - 2)) {
+                // 至少让单词连续两个字符才允许断行
+                return ignore;
+            } else if (charArray[index + 1] && isMark(index + 1)) {
+                // 不允许尾字符单个
+                return ignore;
+            }
+            return !ignore;
+        },
+        // 渲染字符串
         renderLineString: function (text, spacing) {
             return [
-                '<span style="display: inline-block; ',
-                'letter-spacing:' + (spacing ? spacing : 0) + 'px;">',
+                '<span ',
+                'class="' + this.$id + '"',
+                'style="display: block;',
+                'letter-spacing:' + (this.$conf.deep && spacing ? spacing : 0) + 'px;">',
                 text,
-                '</span><br/>'].join('');
+                '</span>'].join('');
         },
+        // 两个字符串之间的距离
         getTwoCharDistance: function (charArray, charMap, from, to) {
             return charArray.slice(from, to).reduce(function (acc, cur) {
-                return cur ? (acc + charMap[cur.charCodeAt()].width) : acc;
+                return cur ? (acc + charMap[cur.charCodeAt()].width) : (acc + 0);
             }, 0);
         },
+        // 合理的字间距以保持每行等宽
         getLineLetterSpacing: function (charMap, lineText, containerWidth) {
             var size = lineText.length;
             var lineWidth = this.getTwoCharDistance(lineText, charMap, 0, size);
@@ -126,8 +182,6 @@
         },
         // 获取文本对象中所有字符的宽高数据
         getAllCharRectData(target, charArray) {
-
-            // 存储文本对象中所有字符的数据
             var charMap = Object.create(null);
             var div = document.createElement('div');
             target.appendChild(div);

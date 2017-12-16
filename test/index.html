@@ -5,6 +5,48 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>hyphen.js</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            position: relative;
+        }
+
+        p,
+        h6 {
+            width: 600px;
+            font-size: 14px;
+            font-family: 'Microsoft Yahei';
+            /*font-style: italic;*/
+            border: 1px solid silver;
+            box-shadow: 2px 2px 4px #eee;
+            padding: .4em;
+            margin: 1em;
+        }
+
+        .w-highlight {
+            display: inline-block;
+            background-color: yellow;
+        }
+
+        .text-animate {
+            background-color: #f2f2f6;
+        }
+
+        .text-js {
+        }
+
+        .text-break {
+            word-break: break-all;
+        }
+
+        .text-origin {
+            border: 1px dashed red;
+        }
+    </style>
 </head>
 
 <body>
@@ -17,7 +59,7 @@
         class declarations, lexical block scoping, iterators and generators, promises for asynchronous programming, destructuring
         patterns, and proper tail calls. The ECMAScript library of built-ins was expanded to support additional data abstractions
         including maps, sets, and arrays of binary numeric values as well as additional support for Unicode supplemental
-        characters in strings and regular expressions. The built-ins were also made extensible via subclassing. The sixth
+        characters in strings and a regular expressi, oinis. The built-ins were also made extensible via subclassing. The sixth
         edition provides the foundation for regular, incremental
         <span class="w-highlight">language</span> and library enhancements. The sixth edition was adopted by the General Assembly of June 2015.
     </p>
@@ -54,47 +96,6 @@
         edition provides the foundation for regular, incremental language and library enhancements. The sixth edition was
         adopted by the General Assembly of June 2015.
     </p>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            position: relative;
-        }
-
-        p,
-        h6 {
-            width: 600px;
-            font-size: 14px;
-            font-family: 'Microsoft Yahei';
-            /*font-style: italic;*/
-            border: 1px solid silver;
-            box-shadow: 2px 2px 4px #eee;
-            padding: .4em;
-            margin: 1em;
-        }
-
-        .w-highlight {
-            display: inline-block;
-            background-color: yellow;
-        }
-
-        .text-animate {
-            background-color: #f2f2f6;
-        }
-
-        .text-js {}
-
-        .text-break {
-            word-break: break-all;
-        }
-
-        .text-origin {
-            border: 1px dashed red;
-        }
-    </style>
     <script type="text/javascript" src="../src/index.js"></script>
     <script type="text/javascript">
         hyphen();
