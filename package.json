@@ -1,0 +1,34 @@
+{
+  "name": "hyphen",
+  "version": "1.0.0",
+  "description": "hyphen tool",
+  "main": "src/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config ./webpack.prod.conf.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gotjoy/hyphenjs.git"
+  },
+  "keywords": [
+    "i18n"
+  ],
+  "author": "1kg",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gotjoy/hyphenjs/issues"
+  },
+  "homepage": "https://github.com/Gotjoy/hyphenjs#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "clean-webpack-plugin": "^0.1.17",
+    "webpack": "^3.10.0"
+  },
+  "dependencies": {}
+}
