@@ -4,13 +4,13 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const buildPath = path.resolve(__dirname, 'dist');
 
 module.exports = {
-    entry: {
-        'hyphen': './src/index.js',
-    },
+    entry: './src/index.js',
     output: {
         path: buildPath,
         publicPath: '/',
-        filename: '[name].min.js'
+        filename: 'hyphen.min.js',
+        library: 'hyphen',
+        libraryTarget: 'var'
     },
     module: {
         loaders: [{
