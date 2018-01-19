@@ -5,7 +5,7 @@
  */
 
 function parser(node) {
-    console.log('parser init');
+    console.log('parser init~');
 }
 
 export default parser;

@@ -10,7 +10,7 @@ module.exports = {
         publicPath: '/',
         filename: 'hyphen.min.js',
         library: 'hyphen',
-        libraryTarget: 'var'
+        libraryTarget: 'window'
     },
     module: {
         loaders: [{

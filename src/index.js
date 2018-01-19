@@ -76,7 +76,7 @@ class Core {
 
     }
 }
-
+utils.parser()
 export function render(conf) {
     new Core(conf);
 };
