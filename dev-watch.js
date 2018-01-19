@@ -5,12 +5,12 @@ const chokidar = require('chokidar');
 const path = require('path');
 const devPath = path.resolve(__dirname, 'src');
 
-let isInit = true;
+let preventExec = true;
 // watch src file change to auto build.
 const watcher = chokidar.watch(devPath, {
     ignored: /node_modules|\.git|dist/
 }).on('all', (event, path) => {
-    if(isInit) return;
+    if(preventExec) return;
     log(event, path, 'start build');
     exec('npm run build', (error, stdout, stderr) => {
         if (error) {
@@ -20,7 +20,7 @@ const watcher = chokidar.watch(devPath, {
         log(blue('Build in dist'));
     });
 }).on('ready', () => {
-    isInit = false;
+    preventExec = false;
     log('Begin to watch');
 })
 
