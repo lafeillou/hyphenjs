@@ -16,7 +16,8 @@
     "url": "git+https://github.com/Gotjoy/hyphenjs.git"
   },
   "keywords": [
-    "i18n"
+    "hyphen",
+    "text"
   ],
   "author": "1kg",
   "license": "ISC",
