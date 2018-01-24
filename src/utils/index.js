@@ -13,8 +13,17 @@ function attr(node, name, value) {
     }
 }
 
+function style(node, name, value) {
+    if(value === undefined) {
+        return node.style[name];
+    } else {
+        return node.style[name] = value;
+    }
+}
+
 export {
     extend,
     attr,
+    style,
     parser
 };

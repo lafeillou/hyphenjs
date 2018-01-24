@@ -3,13 +3,13 @@
  * Develop by 1kg
  * use it to make the text align neatly.
  */
-import Subject from './subject';
+import Emitter from './emitter';
 import * as utils from './utils';
 
 const SPACE = 32;
-const sym = '\"\':;,.?()[]{}<>~!@#$%^&*-+=/\\|1234567890'.split('');
+const specialChars = '\"\':;,.?()[]{}<>~!@#$%^&*-+=/\\|1234567890'.split('');
 const mark = 'hyphen-time';
-const codes = sym.map(s => s.charCodeAt()).concat([SPACE]);
+const codes = specialChars.map(s => s.charCodeAt()).concat([SPACE]);
 const cache = Object.create(null);
 const slice = Array.prototype.slice;
 
@@ -68,15 +68,23 @@ class Core {
     initBaseData() {
         const nodes = this.$conf.nodes;
         nodes.forEach(node => {
-          
+            this.getNodeTextData(node);
         });
+    }
+
+    getNodeTextData(node) {
+        const text = node.innerText;
+        const data = {
+            chars: text.split(''),
+            words: text.split(' ')
+        };
     }
 
     renderNode() {
 
     }
 }
-utils.parser()
-export function render(conf) {
+
+export function render(conf = {}) {
     new Core(conf);
 };

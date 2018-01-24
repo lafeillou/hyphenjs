@@ -3,7 +3,7 @@
  * Develop by 1kg
  */
 
-class Subject {
+class Emitter {
     constructor() {
         this._listeners = {};
     }
@@ -27,4 +27,4 @@ class Subject {
     }
 }
 
-export default Subject;
+export default Emitter;
