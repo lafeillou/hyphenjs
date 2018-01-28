@@ -7,4 +7,4 @@ function parser(node) {
     
 }
 
-export default parser;
+export default parser
