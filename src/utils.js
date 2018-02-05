@@ -1,4 +1,6 @@
-import parser from './parser'
+/**
+ * A common utils
+ */
 
 function extend(from, to) {
     for (let prop in to) from[prop] = to[prop]
@@ -24,6 +26,5 @@ function style(node, name, value) {
 export {
     extend,
     attr,
-    style,
-    parser
+    style
 }

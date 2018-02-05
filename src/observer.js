@@ -3,7 +3,7 @@
  * Develop by 1kg
  */
 
-class Emitter {
+class Observer {
     constructor() {
         this._listeners = {}
     }
@@ -27,4 +27,4 @@ class Emitter {
     }
 }
 
-export default Emitter
+export default new Observer()
