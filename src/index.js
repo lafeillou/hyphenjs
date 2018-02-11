@@ -5,8 +5,8 @@
  */
 import observer from './observer'
 import ccMap from './char-code'
-import utils from './utils'
+import UTILS from './utils'
 
 export function render(config = {}) {
-    // console.log(observer, ccMap, utils)
+    console.log(observer, ccMap, UTILS)
 }

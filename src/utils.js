@@ -23,8 +23,6 @@ function style(node, name, value) {
     }
 }
 
-export {
-    extend,
-    attr,
-    style
-}
+const UTILS = { extend, attr, style }
+
+export default UTILS
