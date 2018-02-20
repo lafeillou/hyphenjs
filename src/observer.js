@@ -1,30 +1,29 @@
 /**
- * emitter.js
- * Develop by 1kg
+ * An event emitter
  */
 
 class Observer {
-    constructor() {
-        this._listeners = {}
-    }
+  constructor() {
+    this._listeners = {}
+  }
 
-    subscribe(name, fn) {
-        let listeners = this._listeners
-        let handlers = listeners[name] || (listeners[name] = [])
-        handlers.push(fn)
-    }
+  subscribe(name, fn) {
+    let listeners = this._listeners
+    let handlers = listeners[name] || (listeners[name] = [])
+    handlers.push(fn)
+  }
 
-    unsubscribe(name, fn) {
-        let listeners = this._listeners[name]
-        if (listeners) listeners.splice(listeners.indexOf(fn), 1)
-    }
+  unsubscribe(name, fn) {
+    let listeners = this._listeners[name]
+    if (listeners) listeners.splice(listeners.indexOf(fn), 1)
+  }
 
-    next(name, ...args) {
-        let listeners = this._listeners[name]
-        if (listeners) {
-            listeners.forEach(h => h.apply(this, ...args))
-        }
+  next(name, ...args) {
+    let listeners = this._listeners[name]
+    if (listeners) {
+      listeners.forEach(h => h.apply(this, ...args))
     }
+  }
 }
 
-export default new Observer()
+export default Observer

@@ -2,8 +2,14 @@
  * Generate char code map
  */
 
-const CHARS = '`\"\':,.?()[]{}<>~!@#$%^&*-+=/\\|1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+const chars = '`\"\':;,.?()[]{}<>~!@#$%^&*-+=/\\|1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+const codeMap = Object.create(null)
 
-const ccMap = Object.create(null)
+chars.split('').map(c => {
+  codeMap[c.charCodeAt()] = c
+})
 
-export default ccMap
+// add space charcode
+codeMap[32] = ' '
+
+export default codeMap
