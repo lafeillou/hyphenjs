@@ -100,9 +100,19 @@
   <script type="text/javascript" src="./dist/hyphen.min.js"></script>
   <script type="text/javascript">
     var h = new Hyphen({
-      el: '.text',
-      neat: true
+      // el: '.text',
+      beforeRender() {
+        console.log('beforeRender', this.nodes)
+      },
+      afterRender() {
+        console.log('afterRender', this.options)
+      },
+      render() {
+        console.log('render', this)
+      },
     });
+
+    console.table(h);
   </script>
 </body>
 

@@ -1,5 +1,5 @@
 /**
- * A common utils
+ * Common utils
  */
 
 export function extend(from, to) {
@@ -17,10 +17,24 @@ export function attr(node, name, value) {
 
 export function style(node, name, value) {
   if (value === undefined) {
-    return node.style[name]
+    return node.style[name] || window.getComputedStyle(node)[name]
   } else {
     return node.style[name] = value
   }
+}
+
+// remove duplicate primitive value in array
+export function makePureArray(arr) {
+  const newArr = []
+  const len = arr.length
+  let i = 0
+  while(i < len) {
+    const v = arr[i++]
+    if(newArr.indexOf(v) < 0) {
+      newArr.push(v)
+    }
+  }
+  return newArr
 }
 
 export function warn(...args) {

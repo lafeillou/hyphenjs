@@ -3,7 +3,7 @@
  * develop by 1kg
  * use it to make the text align neatly.
  */
-import { initMixin, methodMixin, renderMixin } from './mixin'
+import initMixin from './mixin'
 import { warn } from './utils'
 
 function Hyphen(options = {}) {
@@ -14,8 +14,6 @@ function Hyphen(options = {}) {
 }
 
 initMixin(Hyphen)
-methodMixin(Hyphen)
-renderMixin(Hyphen)
 
 Hyphen.version = '__VERSION__'
 

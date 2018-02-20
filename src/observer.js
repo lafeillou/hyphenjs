@@ -1,7 +1,6 @@
 /**
- * An event emitter
+ * Event emitter
  */
-
 class Observer {
   constructor() {
     this._listeners = {}
@@ -21,7 +20,7 @@ class Observer {
   next(name, ...args) {
     let listeners = this._listeners[name]
     if (listeners) {
-      listeners.forEach(h => h.apply(this, ...args))
+      listeners.forEach(h => h.apply(this, args))
     }
   }
 }

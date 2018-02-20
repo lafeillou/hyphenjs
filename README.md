@@ -20,6 +20,10 @@
 
 ```javascript
 
-hyphen.render('p')
+new Hyphen({
+  el: '.text'
+})
 
 ```
+
+`\"\':;,.?()[]{}<>~!@#$%^&*-+=/\|1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
