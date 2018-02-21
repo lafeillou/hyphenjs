@@ -1,7 +1,13 @@
 import Observer from './observer'
+import { callBeforeRender, callInRender, callAfterRender } from './render'
 import { attr, style, extend, makePureArray, warn } from './utils'
 
-const LIFE_CYCLE = ['beforeRender', 'render', 'afterRender']
+const LIFE_CYCLE = [
+  'beforeRender', 
+  'render', 
+  'afterRender'
+]
+
 const noop = function() {}
 
 // prepare all text data
@@ -55,67 +61,6 @@ const initNodeData = h => {
   }
 }
 
-// make text single line to break manually
-const callBeforeRender = h => {
-  const hNodes = h.nodes
-  hNodes.forEach(node => {
-    style(node.node, 'white-space', 'nowrap')
-  })
-}
-
-const callInRender = h => {
-  const hNodes = h.nodes
-  
-  hNodes.forEach(node => {
-    renderLines(node, breakTextToLines(node))
-  })
-
-  // According to the width of the box's width, break text to lines 
-  function breakTextToLines(node) {
-    const chars = node.node.innerText.split('')
-    const nodeWidth = parseFloat(node.nodeWidth)
-    const spans = node.spans
-    const lines = [[]]
-    for(let i = 0, num = 0, accWidth = 0, len = chars.length; i < len; i++) {
-      const code = chars[i].charCodeAt()
-      const charWidth = parseFloat(spans[code].width)
-      const nextCharWidth = chars[i + 1] ? 
-        parseFloat(spans[chars[i + 1].charCodeAt()].width) : 0
-      if(accWidth + nextCharWidth < nodeWidth) {
-        accWidth += charWidth
-        lines[num].push(chars[i])
-      } else {
-        accWidth = 0
-        lines[++num] = []
-      }
-    }
-    return lines
-  }
-
-  // render each line to a div
-  function renderLines(node, lines) {
-    const lineNodes = []
-    const parent = node.node
-    parent.innerHTML = ''
-
-    lines.map(line => {
-      lineNodes.push(createDiv(line.join('')))
-    })
-    
-    lineNodes.forEach(node => {
-      parent.appendChild(node)
-    })
-
-    function createDiv(text) {
-      const div = document.createElement('div')
-      // make sure each div to display block
-      style(div, 'display', 'block')
-      div.innerText = text
-      return div
-    }
-  }
-}
-
 function initLifecycle(h) {
   LIFE_CYCLE.forEach(name => {
     const hook = h.options[name] || noop
@@ -129,7 +74,8 @@ function initRenderEvent(h) {
   h.wisper.next.call(h, 'beforeRender')
   // main render function
   callInRender(h)
-  
+  // when render function done
+  callAfterRender(h)
   // call hook: afterRender
   h.wisper.next.call(h, 'afterRender')
 }
