@@ -7,7 +7,7 @@ module.exports = {
   output: {
     path: buildPath,
     publicPath: '/',
-    filename: 'hyphen.min.js',
+    filename: 'hyphen.js',
     library: 'Hyphen',
     libraryTarget: 'var'
   },

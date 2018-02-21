@@ -1,5 +1,7 @@
 import { style } from './utils'
 
+const excludeHyphenChar = '`1234567890-=[]\;\',./~!@#$%^&*()_+{}|:"<>?'
+
 // make text single line to break manually
 export function callBeforeRender(h) {
   const hNodes = h.nodes
@@ -14,6 +16,7 @@ export function callInRender(h) {
   hNodes.forEach(node => {
     const lines = breakTextToLines(node)
     const spaces = calcLetterSpacing(node, lines)
+    // render each line to a block div
     renderLines(node, lines, spaces)
     // render a node
     h.wisper.next.call(h, 'render')
@@ -25,16 +28,27 @@ export function callInRender(h) {
     const nodeWidth = parseFloat(node.nodeWidth)
     const spans = node.spans
     const lines = [[]]
-    for (let i = 0, num = 0, accWidth = 0, len = chars.length; i < len; i++) {
+    for (let i = 0, num = 0, move = 0, accWidth = 0, len = chars.length; i < len; i++) {
       const code = chars[i].charCodeAt()
       const charWidth = parseFloat(spans[code].width)
-      const nextCharWidth = chars[i + 1] ?
-        parseFloat(spans[chars[i + 1].charCodeAt()].width) : 0
+      const hasNextChar = !!chars[i + 1]
+      const nextCharWidth = hasNextChar ? parseFloat(spans[chars[i + 1].charCodeAt()].width) : 0
 
       lines[num].push(chars[i])
-      if (accWidth + nextCharWidth < nodeWidth) {
+
+      if (accWidth < nodeWidth) {
         accWidth += charWidth
       } else {
+        if(move <= h.options.move && moveNextChar(node, i)) {
+          move++
+          continue
+        } else {
+          move = 0
+        }
+        const dash = hypher(node, i)
+        if(dash.length > 0) {
+          lines[num].push(dash)
+        }
         accWidth = 0
         lines[++num] = []
       }
@@ -85,6 +99,56 @@ export function callInRender(h) {
       div.innerText = text
       return div
     }
+  }
+
+  // auto hyphenation, this is a complicate part
+  // I will make it simple
+  function hypher(node, bIndex) {
+    const text = node.node.innerText
+    const boarderChar = text[bIndex]
+    const boarderNextChar = text[bIndex + 1] ? text[bIndex + 1] : ''
+    if(
+      excludeHyphenChar.indexOf(boarderChar) > -1
+      || excludeHyphenChar.indexOf(boarderNextChar) > -1
+      || boarderChar.charCodeAt() === 32
+      || boarderNextChar.charCodeAt() === 32
+    ) {
+      return ''
+    } else {
+      return '-'
+    }
+  }
+
+  // decide whether should move to next char or not
+  function moveNextChar(node, bIndex) {
+    const wordRe = /[a-zA-Z]/
+    const text = node.node.innerText
+    const leftMin = h.options.leftMin
+    const rightMin = h.options.rightMin
+    let move = false
+
+    function walkLeft(index) {
+      if(!wordRe.test(text[index])) {
+        move = true
+      }
+    }
+
+    function walkRight(index) {
+      if(!wordRe.test(text[index])) {
+        move = true
+      }
+    }
+
+    let l = 0, r = 0
+    while(l++ <= leftMin) {
+      walkLeft(bIndex - l)
+    }
+
+    while(r++ <= rightMin) {
+      walkRight(bIndex + r)
+    }
+
+    return move
   }
 }
 

@@ -158,8 +158,6 @@ function Hyphen() {
 
 (0, _mixin2.default)(Hyphen);
 
-Hyphen.version = '__VERSION__';
-
 exports = module.exports = Hyphen;
 
 /***/ }),
@@ -206,7 +204,7 @@ var initNodeData = function initNodeData(h) {
     var nodeFontFamily = (0, _utils.style)(node, 'font-family');
     var nodeFontWeight = (0, _utils.style)(node, 'font-weight');
     var chars = (0, _utils.makePureArray)(text.split(''));
-
+    chars.push('-');
     // insert a span which has a char to body
     // and get char's real render's width
     var spans = Object.create(null);
@@ -238,14 +236,15 @@ var initNodeData = function initNodeData(h) {
   }
 };
 
-function initLifecycle(h) {
+// subscribe all lifecycle event
+var initLifecycle = function initLifecycle(h) {
   LIFE_CYCLE.forEach(function (name) {
     var hook = h.options[name] || noop;
     h.wisper.subscribe(name, hook);
   });
-}
+};
 
-function initRenderEvent(h) {
+var initRenderEvent = function initRenderEvent(h) {
   (0, _render.callBeforeRender)(h);
   // call hook: beforeRender
   h.wisper.next.call(h, 'beforeRender');
@@ -255,15 +254,15 @@ function initRenderEvent(h) {
   (0, _render.callAfterRender)(h);
   // call hook: afterRender
   h.wisper.next.call(h, 'afterRender');
-}
+};
 
-function initWisper(h) {
+var initWisper = function initWisper(h) {
   // set a wisper to deliver message
   var wisper = new _observer2.default();
   h.wisper = wisper;
   // set _listeners reference to Hyphen instance
   h = (0, _utils.extend)(h, h.wisper);
-}
+};
 
 function initMixin(Hyphen) {
   Hyphen.prototype._init = function (options) {
@@ -273,7 +272,9 @@ function initMixin(Hyphen) {
     this.options = (0, _utils.extend)({
       name: 'hyphen',
       el: 'p',
-      neat: false,
+      leftMin: 2,
+      rightMin: 2,
+      move: 8,
       fixed: 3
     }, options);
 
@@ -349,6 +350,8 @@ exports.callAfterRender = callAfterRender;
 
 var _utils = __webpack_require__(0);
 
+var excludeHyphenChar = '`1234567890-=[]\;\',./~!@#$%^&*()_+{}|:"<>?';
+
 // make text single line to break manually
 function callBeforeRender(h) {
   var hNodes = h.nodes;
@@ -363,6 +366,7 @@ function callInRender(h) {
   hNodes.forEach(function (node) {
     var lines = breakTextToLines(node);
     var spaces = calcLetterSpacing(node, lines);
+    // render each line to a block div
     renderLines(node, lines, spaces);
     // render a node
     h.wisper.next.call(h, 'render');
@@ -374,15 +378,27 @@ function callInRender(h) {
     var nodeWidth = parseFloat(node.nodeWidth);
     var spans = node.spans;
     var lines = [[]];
-    for (var i = 0, num = 0, accWidth = 0, len = chars.length; i < len; i++) {
+    for (var i = 0, num = 0, move = 0, accWidth = 0, len = chars.length; i < len; i++) {
       var code = chars[i].charCodeAt();
       var charWidth = parseFloat(spans[code].width);
-      var nextCharWidth = chars[i + 1] ? parseFloat(spans[chars[i + 1].charCodeAt()].width) : 0;
+      var hasNextChar = !!chars[i + 1];
+      var nextCharWidth = hasNextChar ? parseFloat(spans[chars[i + 1].charCodeAt()].width) : 0;
 
       lines[num].push(chars[i]);
-      if (accWidth + nextCharWidth < nodeWidth) {
+
+      if (accWidth < nodeWidth) {
         accWidth += charWidth;
       } else {
+        if (move <= h.options.move && moveNextChar(node, i)) {
+          move++;
+          continue;
+        } else {
+          move = 0;
+        }
+        var dash = hypher(node, i);
+        if (dash.length > 0) {
+          lines[num].push(dash);
+        }
         accWidth = 0;
         lines[++num] = [];
       }
@@ -435,6 +451,52 @@ function callInRender(h) {
       div.innerText = text;
       return div;
     }
+  }
+
+  // auto hyphenation, this is a complicate part
+  // I will make it simple
+  function hypher(node, bIndex) {
+    var text = node.node.innerText;
+    var boarderChar = text[bIndex];
+    var boarderNextChar = text[bIndex + 1] ? text[bIndex + 1] : '';
+    if (excludeHyphenChar.indexOf(boarderChar) > -1 || excludeHyphenChar.indexOf(boarderNextChar) > -1 || boarderChar.charCodeAt() === 32 || boarderNextChar.charCodeAt() === 32) {
+      return '';
+    } else {
+      return '-';
+    }
+  }
+
+  // decide whether should move to next char or not
+  function moveNextChar(node, bIndex) {
+    var wordRe = /[a-zA-Z]/;
+    var text = node.node.innerText;
+    var leftMin = h.options.leftMin;
+    var rightMin = h.options.rightMin;
+    var move = false;
+
+    function walkLeft(index) {
+      if (!wordRe.test(text[index])) {
+        move = true;
+      }
+    }
+
+    function walkRight(index) {
+      if (!wordRe.test(text[index])) {
+        move = true;
+      }
+    }
+
+    var l = 0,
+        r = 0;
+    while (l++ <= leftMin) {
+      walkLeft(bIndex - l);
+    }
+
+    while (r++ <= rightMin) {
+      walkRight(bIndex + r);
+    }
+
+    return move;
   }
 }
 

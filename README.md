@@ -1,29 +1,25 @@
 # hyphenjs
 
-> 让英文智能断行并添加连字符，实现齐头尾/两端对齐的效果~
+A lightweight and compact tool library that make the English text to line up and add simple hyphen to achieve the effect of the justify alignment.
 
-----
+![comparison](./screenshots/hyphen-example.jpg)
 
-> 红框里是浏览器默认的文本排版，右侧会有锯齿（至于难不难看就见仁见智啦哈哈）。后者是使用`hyphen(selecter, true)`后的文本排版，整齐得像一块豆腐块！
-
-![原本的文本](./screenshots/hyphen-original.png)
-
-![hyphen排版后的文本](./screenshots/hyphen-js.png)
-
-## 特性支持
-
-- 强制文本两端对齐
-- 缓存节点优化性能
-- 判断智能断行时机并添加连字符
-
-## 使用说明
+## API Doc
 
 ```javascript
-
 new Hyphen({
-  el: '.text'
+  // nodeList need render
+  el: '.text-js',
+  // (left and right) hyphenate control
+  leftMin: 2,
+  rightMin: 2,
+  // move threshold
+  move: 8,
+  // width precision
+  fixed: 3,
+  // lifecycle hook
+  beforeRender() {}
+  afterRender() {}
+  render() {}
 })
-
 ```
-
-`\"\':;,.?()[]{}<>~!@#$%^&*-+=/\|1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ

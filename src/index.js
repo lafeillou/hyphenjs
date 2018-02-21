@@ -15,6 +15,4 @@ function Hyphen(options = {}) {
 
 initMixin(Hyphen)
 
-Hyphen.version = '__VERSION__'
-
 exports = module.exports = Hyphen

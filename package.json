@@ -1,7 +1,7 @@
 {
   "name": "hyphen",
   "version": "1.0.0",
-  "description": "hyphen tool",
+  "description": "Auto hyphenation and line up your text",
   "main": "src/index.js",
   "directories": {
     "test": "test"

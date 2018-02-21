@@ -15,32 +15,17 @@
 
     body {
       position: relative;
-    }
-
-    p,
-    h6 {
-      width: 600px;
-      font-size: 14px;
       font-family: 'Microsoft Yahei';
-      border: 1px solid silver;
-      box-shadow: 2px 2px 4px #eee;
-      padding: .4em;
+    }
+    h1 {
       margin: 1em;
     }
-
-    .w-highlight {
-      display: inline-block;
-      background-color: yellow;
-    }
-
-    .text-animate {
-      background-color: #f2f2f6;
-    }
-
-    .text-js {}
-
-    .text-break {
-      word-break: break-all;
+    p {
+      width: 400px;
+      font-size: 16px;
+      border: 1px solid silver;
+      padding: .4em;
+      margin: 1em;
     }
 
     .text-origin {
@@ -50,69 +35,32 @@
 </head>
 
 <body>
+  <h1>hyphen.js</h1>
   <p class="text text-js">
-    Focused development of the sixth edition started in 2009, as the fifth edition was being prepared for publication. However,
-    this was preceded by significant experimentation and language enhancement design efforts dating to the publication of
-    the third edition in 1999. In a very real sense, the completion of the sixth edition is the culmination of a fifteen
-    year effort. The goals for this addition included providing better support for large applications, library creation,
-    and for use of ECMAScript as a compilation target for other languages. Some of its major enhancements included modules,
-    class declarations, lexical block scoping, iterators and generators, promises for asynchronous programming, destructuring
-    patterns, and proper tail calls. The ECMAScript library of built-ins was expanded to support additional data abstractions
-    including maps, sets, and arrays of binary numeric values as well as additional support for Unicode supplemental characters
-    in strings and a regular expressi, oinis. The built-ins were also made extensible via subclassing. The sixth edition
-    provides the foundation for regular, incremental
-    <span class="w-highlight">language</span> and library enhancements. The sixth edition was adopted by the General Assembly of June 2015.
+    Do not confuse JavaScript with the Java programming language. Both "Java" and "JavaScript" are trademarks or registered trademarks
+    of Oracle in the U.S. and other countries. However, the two programming languages have very different syntax, semantics,
+    and uses. When writing client-side JavaScript for web sites or applications, you won't go very far before you start to use APIs — interfaces for manipulating different aspects of the browser and operating system the site is running on, or even data from other web sites or services. In this module we will explore what APIs are, and how to use some of the most common APIs you'll come across often in your development work. 
   </p>
 
-  <p class="text-origin">
-    Focused development of the sixth edition started in 2009, as the fifth edition was being prepared for publication. However,
-    this was preceded by significant experimentation and language enhancement design efforts dating to the publication of
-    the third edition in 1999. In a very real sense, the completion of the sixth edition is the culmination of a fifteen
-    year effort. The goals for this addition included providing better support for large applications, library creation,
-    and for use of ECMAScript as a compilation target for other languages. Some of its major enhancements included modules,
-    class declarations, lexical block scoping, iterators and generators, promises for asynchronous programming, destructuring
-    patterns, and proper tail calls. The ECMAScript library of built-ins was expanded to support additional data abstractions
-    including maps, sets, and arrays of binary numeric values as well as additional support for Unicode supplemental characters
-    in strings and regular expressions. The built-ins were also made extensible via subclassing. The sixth edition provides
-    the foundation for regular, incremental
-    <span class="w-highlight">language</span> and library enhancements. The sixth edition was adopted by the General Assembly of June 2015.
+  <p class="text text-origin">
+    Do not confuse JavaScript with the Java programming language. Both "Java" and "JavaScript" are trademarks or registered trademarks
+    of Oracle in the U.S. and other countries. However, the two programming languages have very different syntax, semantics,
+    and uses. When writing client-side JavaScript for web sites or applications, you won't go very far before you start to use APIs — interfaces for manipulating different aspects of the browser and operating system the site is running on, or even data from other web sites or services. In this module we will explore what APIs are, and how to use some of the most common APIs you'll come across often in your development work. 
   </p>
-
-  <h6 class="text-js">
-    Focused
-    <span class="w-highlight">development</span> of the sixth edition started in 2009, as the fifth edition was being prepared for publication. However,
-    this was preceded by significant experimentation...
-  </h6>
-
-  <p id="text" class="text text-animate">
-    Focused development of the sixth edition started in 2009, as the fifth edition was being prepared for publication. However,
-    this was preceded by significant experimentation and language enhancement design efforts dating to the publication of
-    the third edition in 1999. In a very real sense, the completion of the sixth edition is the culmination of a fifteen
-    year effort. The goals for this addition included providing better support for large applications, library creation,
-    and for use of ECMAScript as a compilation target for other languages. Some of its major enhancements included modules,
-    class declarations, lexical block scoping, iterators and generators, promises for asynchronous programming, destructuring
-    patterns, and proper tail calls. The ECMAScript library of built-ins was expanded to support additional data abstractions
-    including maps, sets, and arrays of binary numeric values as well as additional support for Unicode supplemental characters
-    in strings and regular expressions. The built-ins were also made extensible via subclassing. The sixth edition provides
-    the foundation for regular, incremental language and library enhancements. The sixth edition was adopted by the General
-    Assembly of June 2015.
-  </p>
-  <script type="text/javascript" src="./dist/hyphen.min.js"></script>
-  <script type="text/javascript">
+  <script src="./dist/hyphen.js"></script>
+  <script>
     var h = new Hyphen({
       el: '.text-js',
       beforeRender() {
-        console.log('beforeRender', this.nodes)
+        console.log('beforeRender hook', this)
       },
       afterRender() {
-        console.log('afterRender', this.options)
+        console.log('afterRender hook', this)
       },
       render() {
-        console.log('render', this)
+        console.log('render hook', this)
       },
     });
-
-    console.table(h);
   </script>
 </body>
 

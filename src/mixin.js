@@ -1,6 +1,6 @@
 import Observer from './observer'
 import { callBeforeRender, callInRender, callAfterRender } from './render'
-import { attr, style, extend, makePureArray, warn } from './utils'
+import { style, extend, makePureArray, warn } from './utils'
 
 const LIFE_CYCLE = [
   'beforeRender', 
@@ -29,7 +29,7 @@ const initNodeData = h => {
     const nodeFontFamily = style(node, 'font-family')
     const nodeFontWeight = style(node, 'font-weight')
     const chars = makePureArray(text.split(''))
-    
+    chars.push('-')
     // insert a span which has a char to body
     // and get char's real render's width
     const spans = Object.create(null)
@@ -61,14 +61,15 @@ const initNodeData = h => {
   }
 }
 
-function initLifecycle(h) {
+// subscribe all lifecycle event
+const initLifecycle = h => {
   LIFE_CYCLE.forEach(name => {
     const hook = h.options[name] || noop
     h.wisper.subscribe(name, hook)
   })
 }
 
-function initRenderEvent(h) {  
+const initRenderEvent = h => {  
   callBeforeRender(h)
   // call hook: beforeRender
   h.wisper.next.call(h, 'beforeRender')
@@ -80,7 +81,7 @@ function initRenderEvent(h) {
   h.wisper.next.call(h, 'afterRender')
 }
 
-function initWisper(h) {
+const initWisper = h => {
   // set a wisper to deliver message
   const wisper = new Observer()
   h.wisper = wisper
@@ -96,7 +97,9 @@ function initMixin(Hyphen) {
     this.options = extend({
       name: 'hyphen',
       el: 'p',
-      neat: false,
+      leftMin: 2,
+      rightMin: 2,
+      move: 8,
       fixed: 3
     }, options)
     
