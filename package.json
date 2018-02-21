@@ -9,7 +9,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./dev-watch",
-    "dev": "webpack --config ./webpack.dev.conf.js",
     "build": "webpack --config ./webpack.prod.conf.js"
   },
   "repository": {

@@ -17,9 +17,8 @@ const initNodeData = h => {
   // parse single node to get box's width, font-size
   // and each char's width
   function parseNode(node) {
-    const rect = node.getBoundingClientRect()
     const text = node.innerText
-    const nodeWidth = (rect.width).toFixed(options.fixed)
+    const nodeWidth = parseFloat(style(node, 'width')).toFixed(options.fixed)
     const nodeFontSize = style(node, 'font-size')
     const nodeFontFamily = style(node, 'font-family')
     const nodeFontWeight = style(node, 'font-weight')
@@ -62,7 +61,59 @@ const callBeforeRender = h => {
   hNodes.forEach(node => {
     style(node.node, 'white-space', 'nowrap')
   })
-  h.wisper.next()
+}
+
+const callInRender = h => {
+  const hNodes = h.nodes
+  
+  hNodes.forEach(node => {
+    renderLines(node, breakTextToLines(node))
+  })
+
+  // According to the width of the box's width, break text to lines 
+  function breakTextToLines(node) {
+    const chars = node.node.innerText.split('')
+    const nodeWidth = parseFloat(node.nodeWidth)
+    const spans = node.spans
+    const lines = [[]]
+    for(let i = 0, num = 0, accWidth = 0, len = chars.length; i < len; i++) {
+      const code = chars[i].charCodeAt()
+      const charWidth = parseFloat(spans[code].width)
+      const nextCharWidth = chars[i + 1] ? 
+        parseFloat(spans[chars[i + 1].charCodeAt()].width) : 0
+      if(accWidth + nextCharWidth < nodeWidth) {
+        accWidth += charWidth
+        lines[num].push(chars[i])
+      } else {
+        accWidth = 0
+        lines[++num] = []
+      }
+    }
+    return lines
+  }
+
+  // render each line to a div
+  function renderLines(node, lines) {
+    const lineNodes = []
+    const parent = node.node
+    parent.innerHTML = ''
+
+    lines.map(line => {
+      lineNodes.push(createDiv(line.join('')))
+    })
+    
+    lineNodes.forEach(node => {
+      parent.appendChild(node)
+    })
+
+    function createDiv(text) {
+      const div = document.createElement('div')
+      // make sure each div to display block
+      style(div, 'display', 'block')
+      div.innerText = text
+      return div
+    }
+  }
 }
 
 function initLifecycle(h) {
@@ -70,15 +121,14 @@ function initLifecycle(h) {
     const hook = h.options[name] || noop
     h.wisper.subscribe(name, hook)
   })
-  // set listeners reference to Hyphen instance
-  h = extend(h, h.wisper)
 }
 
 function initRenderEvent(h) {  
+  callBeforeRender(h)
   // call hook: beforeRender
   h.wisper.next.call(h, 'beforeRender')
-  
-  callBeforeRender(h)
+  // main render function
+  callInRender(h)
   
   // call hook: afterRender
   h.wisper.next.call(h, 'afterRender')
@@ -88,6 +138,8 @@ function initWisper(h) {
   // set a wisper to deliver message
   const wisper = new Observer()
   h.wisper = wisper
+  // set _listeners reference to Hyphen instance
+  h = extend(h, h.wisper)
 }
 
 function initMixin(Hyphen) {
