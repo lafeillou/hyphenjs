@@ -364,12 +364,18 @@ function callInRender(h) {
   var hNodes = h.nodes;
 
   hNodes.forEach(function (node) {
-    var lines = breakTextToLines(node);
-    var spaces = calcLetterSpacing(node, lines);
-    // render each line to a block div
-    renderLines(node, lines, spaces);
-    // render a node
-    h.wisper.next.call(h, 'render');
+    var rendered = (0, _utils.attr)(node.node, 'data-' + h.options.name);
+    // prevent repeatly render
+    if (typeof rendered === 'string' && rendered === 'rendered') {
+      (0, _utils.warn)('This node ' + node.node.nodeName + ' has rendered by Hyphen');
+    } else {
+      var lines = breakTextToLines(node);
+      var spaces = calcLetterSpacing(node, lines);
+      // render each line to a block div
+      renderLines(node, lines, spaces);
+      // render a node
+      h.wisper.next.call(h, 'render');
+    }
   });
 
   // According to the width of the box's width, break text to lines 
@@ -500,7 +506,13 @@ function callInRender(h) {
   }
 }
 
-function callAfterRender(h) {}
+function callAfterRender(h) {
+  var hNodes = h.nodes;
+  // mark hyphenate
+  hNodes.forEach(function (node) {
+    (0, _utils.attr)(node.node, 'data-' + h.options.name, 'rendered');
+  });
+}
 
 /***/ })
 /******/ ]);

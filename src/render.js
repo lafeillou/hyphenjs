@@ -1,4 +1,4 @@
-import { style } from './utils'
+import { style, attr, warn } from './utils'
 
 const excludeHyphenChar = '`1234567890-=[]\;\',./~!@#$%^&*()_+{}|:"<>?'
 
@@ -14,12 +14,18 @@ export function callInRender(h) {
   const hNodes = h.nodes
 
   hNodes.forEach(node => {
-    const lines = breakTextToLines(node)
-    const spaces = calcLetterSpacing(node, lines)
-    // render each line to a block div
-    renderLines(node, lines, spaces)
-    // render a node
-    h.wisper.next.call(h, 'render')
+    const rendered = attr(node.node, `data-${h.options.name}`)
+    // prevent repeatly render
+    if(typeof rendered === 'string' && rendered === 'rendered') {
+      warn(`This node ${node.node.nodeName} has rendered by Hyphen`)
+    } else {
+      const lines = breakTextToLines(node)
+      const spaces = calcLetterSpacing(node, lines)
+      // render each line to a block div
+      renderLines(node, lines, spaces)
+      // render a node
+      h.wisper.next.call(h, 'render')
+    }
   })
 
   // According to the width of the box's width, break text to lines 
@@ -153,5 +159,9 @@ export function callInRender(h) {
 }
 
 export function callAfterRender(h) {
-
+  const hNodes = h.nodes
+  // mark hyphenate
+  hNodes.forEach(node => {
+    attr(node.node, `data-${h.options.name}`, 'rendered')
+  })
 }
