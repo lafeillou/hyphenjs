@@ -272,8 +272,8 @@ function initMixin(Hyphen) {
     this.options = (0, _utils.extend)({
       name: 'hyphen',
       el: 'p',
-      leftMin: 2,
-      rightMin: 2,
+      leftMin: 1,
+      rightMin: 1,
       move: 8,
       fixed: 3
     }, options);
@@ -416,9 +416,9 @@ function callInRender(h) {
       var charWidthArray = line.map(function (char) {
         return parseFloat(spans[char.charCodeAt()].width);
       });
-      var lineWidth = charWidthArray.reduce(function (a, c) {
+      var lineWidth = charWidthArray.length > 0 ? charWidthArray.reduce(function (a, c) {
         return a + c;
-      });
+      }) : 0;
       spaces.push((nodeWidth - lineWidth) / lineSize);
     });
     return spaces;

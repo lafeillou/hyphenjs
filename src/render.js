@@ -64,7 +64,7 @@ export function callInRender(h) {
     lines.forEach(line => {
       const lineSize = line.length
       const charWidthArray = line.map(char => parseFloat(spans[char.charCodeAt()].width))
-      const lineWidth = charWidthArray.reduce((a, c) => a + c)
+      const lineWidth = charWidthArray.length > 0 ? charWidthArray.reduce((a, c) => a + c) : 0
       spaces.push(
         (nodeWidth - lineWidth) / lineSize
       )

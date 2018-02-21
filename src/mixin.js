@@ -97,8 +97,8 @@ function initMixin(Hyphen) {
     this.options = extend({
       name: 'hyphen',
       el: 'p',
-      leftMin: 2,
-      rightMin: 2,
+      leftMin: 1,
+      rightMin: 1,
       move: 8,
       fixed: 3
     }, options)
